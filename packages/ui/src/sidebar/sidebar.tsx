@@ -16,6 +16,11 @@ interface SidebarProps {
   onNewChat?: () => void;
   className?: string;
   children?: ReactNode;
+  userProfile?: {
+    name?: string;
+    email?: string;
+    avatar?: string;
+  };
 }
 
 export const Sidebar = ({
@@ -28,6 +33,7 @@ export const Sidebar = ({
   onNewChat,
   className = "",
   children,
+  userProfile,
 }: SidebarProps) => {
   if (!isOpen) {
     return (
@@ -60,7 +66,7 @@ export const Sidebar = ({
         {children}
       </div>
 
-      <SidebarFooter />
+      <SidebarFooter userProfile={userProfile} />
     </aside>
   );
 };

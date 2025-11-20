@@ -1,5 +1,7 @@
 export default function Home() {
   return (
-    <div>Home</div>
-  )
+    <main className="flex min-h-screen items-center justify-center">
+      <p className="text-xl font-semibold">Home</p>
+    </main>
+  );
 }

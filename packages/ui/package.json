@@ -7,7 +7,8 @@
     "./input": "./src/input/index.ts",
     "./chat-threads": "./src/chat-threads/index.ts",
     "./sidebar": "./src/sidebar/index.ts",
-    "./profile": "./src/profile/index.ts"
+    "./profile": "./src/profile/index.ts",
+    "./chat-page": "./src/chat-page.tsx"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
