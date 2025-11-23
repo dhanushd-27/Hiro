@@ -8,6 +8,7 @@
     "./chat-threads": "./src/chat-threads/index.ts",
     "./sidebar": "./src/sidebar/index.ts",
     "./profile": "./src/profile/index.ts",
+    "./button": "./src/button/index.ts",
     "./chat-page": "./src/chat-page.tsx"
   },
   "scripts": {
