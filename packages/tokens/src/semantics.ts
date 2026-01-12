@@ -15,6 +15,12 @@ export const semantic = {
       surface: "color.base.lightPanel",
     },
 
+    surface: {
+      default: "color.white",
+      subtle: "color.neutral.50",
+      disabled: "color.neutral.100",
+    },
+
     text: {
       primary: "color.alpha.black.87",
       secondary: "color.alpha.black.65",
@@ -31,6 +37,8 @@ export const semantic = {
 
     border: {
       default: "color.base.border",
+      neutral: "color.neutral.300",
+      disabled: "color.neutral.200",
     },
 
     brand: {
@@ -66,6 +74,12 @@ export const semantic = {
       surface: "color.base.darkPanel",
     },
 
+    surface: {
+      default: "color.neutral.800",
+      subtle: "color.neutral.700",
+      disabled: "color.neutral.600",
+    },
+
     text: {
       primary: "color.alpha.white.87",
       secondary: "color.alpha.white.65",
@@ -80,6 +94,8 @@ export const semantic = {
 
     border: {
       default: "color.base.border",
+      neutral: "color.neutral.500",
+      disabled: "color.neutral.600",
     },
 
     brand: {
