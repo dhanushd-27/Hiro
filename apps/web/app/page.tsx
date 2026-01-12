@@ -1,10 +1,12 @@
-import Link from "next/link";
+import { Header } from "../components";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen items-center justify-center">
-      <p className="text-xl font-semibold">Home</p>
-      <Link href="/chat">Chat</Link>
-    </main>
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <main className="flex flex-1 flex-col items-center justify-center">
+        {/* Main content goes here */}
+      </main>
+    </div>
   );
 }
