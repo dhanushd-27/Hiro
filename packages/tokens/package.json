@@ -8,7 +8,10 @@
     "build": "tsc"
   },
   "exports": {
-    
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
