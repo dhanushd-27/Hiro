@@ -32,6 +32,7 @@ export const ChatInput = ({
   maxRows = 6,
 }: ChatInputProps) => {
   const [message, setMessage] = useState("");
+  const [isExpanded, setIsExpanded] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const adjustHeight = useCallback(() => {
@@ -46,6 +47,9 @@ export const ChatInput = ({
     
     // Show scrollbar only when content exceeds max height
     textarea.style.overflowY = textarea.scrollHeight > maxHeight ? "auto" : "hidden";
+    
+    // Check if expanded (more than ~1.5 lines)
+    setIsExpanded(newHeight > lineHeight * 1.5);
   }, [maxRows]);
 
   useEffect(() => {
@@ -63,6 +67,7 @@ export const ChatInput = ({
       textareaRef.current.style.height = "auto";
       textareaRef.current.style.overflowY = "hidden";
     }
+    setIsExpanded(false);
   }, [message, disabled, onSend]);
 
   const handleKeyDown = useCallback(
@@ -83,7 +88,7 @@ export const ChatInput = ({
 
   return (
     <div className={`chat-input-container ${className}`}>
-      <div className={`chat-input-wrapper ${disabled ? "chat-input-disabled" : ""}`}>
+      <div className={`chat-input-wrapper ${disabled ? "chat-input-disabled" : ""} ${isExpanded ? "chat-input-expanded" : ""}`}>
         {/* Attach button */}
         <button
           type="button"
