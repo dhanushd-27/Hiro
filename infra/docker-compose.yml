@@ -1,0 +1,35 @@
+services:
+  postgres:
+    image: postgres:18-alpine
+    ports:
+      - 5432:5432
+    environment:
+     POSTGRES_USER: hiro
+     POSTGRES_PASSWORD: hiro_password
+     POSTGRES_DB: hiro_db
+     POSTGRES_PORT: 5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hiro"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - 6333:6333
+    environment:
+      QDRANT_PORT: 6333
+    volumes:
+      - qdrant_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:6333/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  qdrant_data:
