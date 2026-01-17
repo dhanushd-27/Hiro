@@ -1,2 +1,2 @@
-server-up:
-	uvicorn src.main:app --reload
+dev:
+	fastapi dev src/main.py
