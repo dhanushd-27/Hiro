@@ -1,2 +1,2 @@
 dev:
-	fastapi dev src/main.py
+	uv run fastapi dev src/main.py

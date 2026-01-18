@@ -1,5 +1,6 @@
 services:
-  postgres:
+  db:
+    container_name: db
     image: postgres:18-alpine
     ports:
       - 5432:5432
