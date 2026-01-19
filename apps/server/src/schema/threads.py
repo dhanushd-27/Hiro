@@ -1,27 +1,24 @@
 from datetime import datetime
 from uuid import UUID
 from pydantic import BaseModel
-from typing import List, Optional
 
-from src.schema.messages import MessageRead
 
-class ThreadBase(BaseModel):
-  title: str
-  pinned: bool = False
+class ThreadCreate(BaseModel):
+    title: str | None = None
+    pinned: bool | None = None
 
-class ThreadCreate(ThreadBase):
-  title: Optional[str] = None
-  pinned: Optional[str] = None
+
+class ThreadUpdate(BaseModel):
+    title: str | None = None
+    pinned: bool | None = None
+
 
 class ThreadRead(BaseModel):
-  id: UUID
-  title: str
-  pinned: bool
-  created_at: datetime
-  updated_at: datetime
+    id: UUID
+    title: str
+    pinned: bool
+    created_at: datetime
+    updated_at: datetime
 
-  class Config:
-    from_attributes = True
-
-class ThreadReadWithMessages(ThreadRead):
-  messages: List[MessageRead]
+    class Config:
+        from_attributes = True
