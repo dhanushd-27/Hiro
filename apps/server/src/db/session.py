@@ -7,10 +7,9 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
 )
 
-from src.core.config import CONFIG
+from src.core.config import get_settings
 
-
-DB_URL = f"postgresql+asyncpg://{CONFIG.POSTGRES_USER}:{CONFIG.POSTGRES_PASSWORD}@localhost:5432/{CONFIG.POSTGRES_DB}"
+DB_URL = get_settings().database_urL
 
 # Global engine and session factory - initialized in lifespan
 engine: AsyncEngine | None = None

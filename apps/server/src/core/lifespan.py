@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from src.core.db import init_db, close_db
+from src.db.session import init_db, close_db
 
 
 @asynccontextmanager
