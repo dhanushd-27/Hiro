@@ -5,8 +5,11 @@ requires-python = ">=3.13"
 dependencies = [
     "alembic>=1.18.1",
     "asyncpg>=0.31.0",
+    "authlib>=1.6.6",
     "fastapi[standard]>=0.128.0",
     "greenlet>=3.0.0",
-    "pydantic-settings[dotenv]>=2.12.0",
+    "passlib>=1.7.4",
+    "pydantic-settings>=2.12.0",
+    "pyjwt>=2.10.1",
     "sqlalchemy>=2.0.45",
 ]

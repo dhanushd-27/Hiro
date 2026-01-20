@@ -1,4 +1,5 @@
 from functools import lru_cache
+from turtle import st
 from pydantic import computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -14,6 +15,15 @@ class Settings(BaseSettings):
   POSTGRES_DB: str
   POSTGRES_HOST: str = "localhost"
   POSTGRES_PORT: int = 5432
+  SECRET_KEY: str
+  ALGORITHM: str
+  GOOGLE_CLIENT_ID: str
+  GOOGLE_CLIENT_SECRET: str
+  APP_CLIENT_API: str
+  ACCESS_TOKEN_COOKIE_NAME: str
+  REFRESH_TOKEN_COOKIE_NAME: str
+  ACCESS_TOKEN_EXPIRE: int
+  REFRESH_TOKEN_EXPIRE: int
 
 
   @computed_field
