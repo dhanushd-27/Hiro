@@ -8,15 +8,23 @@ class UserRegister(BaseModel):
     password: str
     name: str
 
+
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
+
+
+class UserUpdate(BaseModel):
+    name: str | None = None
+    avatar_url: str | None = None
+
 
 class UserGoogleAuth(BaseModel):
     google_id: str
     email: EmailStr | None = None
     name: str | None = None
     avatar_url: str | None = None
+
 
 class UserRead(BaseModel):
     id: UUID
@@ -29,3 +37,13 @@ class UserRead(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+
+
+class AuthResponse(BaseModel):
+    user: UserRead
+    token: TokenResponse
