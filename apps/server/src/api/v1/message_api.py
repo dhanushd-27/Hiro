@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.db.session import get_db
-from src.schema.messages import MessageCreate, MessageRead
+from src.schema.message_schema import MessageCreate, MessageRead
 from src.services.message_service import MessageService
 
 router = APIRouter()

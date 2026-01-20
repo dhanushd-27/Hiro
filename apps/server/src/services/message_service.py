@@ -3,9 +3,9 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.db.models.messages import Message
-from src.db.models.threads import Thread
-from src.schema.messages import MessageCreate
+from src.db.models.message_model import Message
+from src.db.models.thread_model import Thread
+from src.schema.message_schema import MessageCreate
 
 
 class MessageService:

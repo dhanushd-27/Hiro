@@ -9,7 +9,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from src.db.base import Base
 
 if TYPE_CHECKING:
-    from src.db.models.threads import Thread
+    from src.db.models.thread_model import Thread
 
 
 class User(Base):

@@ -2,18 +2,19 @@ from typing import TYPE_CHECKING
 import uuid
 from datetime import datetime, timezone
 
-from sqlalchemy import ForeignKey, String, Boolean, DateTime
+from sqlalchemy import Text, DateTime, ForeignKey, Enum, Index
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.db.base import Base
+from src.helpers.enum import MessageRole
 
 if TYPE_CHECKING:
-    from src.db.models.messages import Message
-    from src.db.models.user import User
+    from src.db.models.thread_model import Thread
 
-class Thread(Base):
-    __tablename__ = "threads"
+
+class Message(Base):
+    __tablename__ = "messages"
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
@@ -21,20 +22,20 @@ class Thread(Base):
         default=uuid.uuid4,
     )
 
-    user_id: Mapped[uuid.UUID] = mapped_column(
+    thread_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("users.id", ondelete="CASCADE"),
+        ForeignKey("threads.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+
+    role: Mapped[MessageRole] = mapped_column(
+        Enum(MessageRole, name="message_role_enum"),
         nullable=False,
     )
 
-    title: Mapped[str] = mapped_column(
-        String(255),
-        nullable=False,
-    )
-
-    pinned: Mapped[bool] = mapped_column(
-        Boolean,
-        default=False,
+    message: Mapped[str] = mapped_column(
+        Text,
         nullable=False,
     )
 
@@ -51,13 +52,10 @@ class Thread(Base):
         nullable=False,
     )
 
-    # Relationships
-    user: Mapped["User"] = relationship(
-        back_populates="threads",
+    thread: Mapped["Thread"] = relationship(
+        back_populates="messages",
     )
 
-    messages: Mapped[list["Message"]] = relationship(
-        back_populates="thread",
-        cascade="all, delete-orphan",
-        order_by="Message.created_at",
+    __table_args__ = (
+        Index("ix_messages_thread_created", "thread_id", "created_at"),
     )

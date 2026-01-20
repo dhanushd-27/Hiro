@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.db.session import get_db
-from src.schema.threads import ThreadCreate, ThreadRead, ThreadUpdate
+from src.schema.thread_schema import ThreadCreate, ThreadRead, ThreadUpdate
 from src.services.thread_service import ThreadService
 
 router = APIRouter()

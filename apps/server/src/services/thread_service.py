@@ -3,8 +3,8 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.db.models.threads import Thread
-from src.schema.threads import ThreadCreate, ThreadUpdate
+from src.db.models.thread_model import Thread
+from src.schema.thread_schema import ThreadCreate, ThreadUpdate
 
 
 class ThreadService:

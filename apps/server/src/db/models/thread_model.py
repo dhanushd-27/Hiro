@@ -2,19 +2,18 @@ from typing import TYPE_CHECKING
 import uuid
 from datetime import datetime, timezone
 
-from sqlalchemy import Text, DateTime, ForeignKey, Enum, Index
+from sqlalchemy import ForeignKey, String, Boolean, DateTime
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.db.base import Base
-from src.helpers.enum import MessageRole
 
 if TYPE_CHECKING:
-    from src.db.models.threads import Thread
+    from src.db.models.message_model import Message
+    from src.db.models.user_model import User
 
-
-class Message(Base):
-    __tablename__ = "messages"
+class Thread(Base):
+    __tablename__ = "threads"
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
@@ -22,20 +21,20 @@ class Message(Base):
         default=uuid.uuid4,
     )
 
-    thread_id: Mapped[uuid.UUID] = mapped_column(
+    user_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("threads.id", ondelete="CASCADE"),
-        nullable=False,
-        index=True,
-    )
-
-    role: Mapped[MessageRole] = mapped_column(
-        Enum(MessageRole, name="message_role_enum"),
+        ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
     )
 
-    message: Mapped[str] = mapped_column(
-        Text,
+    title: Mapped[str] = mapped_column(
+        String(255),
+        nullable=False,
+    )
+
+    pinned: Mapped[bool] = mapped_column(
+        Boolean,
+        default=False,
         nullable=False,
     )
 
@@ -52,10 +51,13 @@ class Message(Base):
         nullable=False,
     )
 
-    thread: Mapped["Thread"] = relationship(
-        back_populates="messages",
+    # Relationships
+    user: Mapped["User"] = relationship(
+        back_populates="threads",
     )
 
-    __table_args__ = (
-        Index("ix_messages_thread_created", "thread_id", "created_at"),
+    messages: Mapped[list["Message"]] = relationship(
+        back_populates="thread",
+        cascade="all, delete-orphan",
+        order_by="Message.created_at",
     )
