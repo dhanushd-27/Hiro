@@ -10,33 +10,20 @@ from src.core.security import (
     set_auth_cookies,
     clear_auth_cookies,
 )
+from src.core.security.google_oauth import oauth
 from src.db.session import get_db
 from src.schema.user_schema import (
     UserRegister,
     UserLogin,
     UserRead,
     AuthResponse,
+    UserGoogleAuth,
 )
-from src.services.user_service import UserService
+from src.services.auth_service import AuthService
 
 settings = get_settings()
 
-router = APIRouter(prefix="/user/auth")
-
-
-@router.get(
-    "/me",
-    response_model=UserRead,
-)
-async def get_current_user(
-    # TODO: Add auth dependency to get current user from token
-    session: AsyncSession = Depends(get_db),
-):
-    """Get current authenticated user."""
-    # TODO: Implement
-    # - Extract user from auth token
-    # - Return user data
-    raise HTTPException(status_code=501, detail="Not implemented")
+router = APIRouter(prefix="/auth")
 
 
 @router.post(
@@ -45,16 +32,24 @@ async def get_current_user(
     status_code=status.HTTP_201_CREATED,
 )
 async def register(
+    response: Response,
     payload: UserRegister,
     session: AsyncSession = Depends(get_db),
 ):
     """Register a new user with email and password."""
-    # TODO: Implement
-    # - Call user service to register
-    # - Generate JWT token
-    # - Return user and token
-    service = UserService(session)
-    raise HTTPException(status_code=501, detail="Not implemented")
+    service = AuthService(session)
+    user, access_token, refresh_token = await service.register_user(payload)
+    
+    # Set cookies
+    set_auth_cookies(response, access_token, refresh_token)
+    
+    return {
+        "user": user,
+        "token": {
+            "access_token": access_token,
+            "token_type": "bearer"
+        }
+    }
 
 
 @router.post(
@@ -62,51 +57,66 @@ async def register(
     response_model=AuthResponse,
 )
 async def login(
+    response: Response,
     payload: UserLogin,
     session: AsyncSession = Depends(get_db),
 ):
     """Login with email and password."""
-    # TODO: Implement
-    # - Call user service to authenticate
-    # - Generate JWT token
-    # - Return user and token
-    service = UserService(session)
-    raise HTTPException(status_code=501, detail="Not implemented")
+    service = AuthService(session)
+    result = await service.authenticate_user(payload)
+    
+    if not result:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid email or password"
+        )
+    
+    user, access_token, refresh_token = result
+    
+    # Set cookies
+    set_auth_cookies(response, access_token, refresh_token)
+    
+    return {
+        "user": user,
+        "token": {
+            "access_token": access_token,
+            "token_type": "bearer"
+        }
+    }
 
 
 @router.get(
     "/google",
 )
-async def google_login():
-    """Initiate Google OAuth login flow."""
-    # TODO: Implement
-    # - Generate OAuth state
-    # - Build Google OAuth URL
-    # - Redirect to Google
-    raise HTTPException(status_code=501, detail="Not implemented")
+async def google_login(request: Request):
+    """Redirect to Google OAuth login page."""
+    service = AuthService()
+    return await service.get_google_auth_redirect_url(request)
 
 
 @router.get(
     "/google/callback",
+    response_model=AuthResponse,
 )
 async def google_callback(
-    code: str | None = None,
-    error: str | None = None,
+    request: Request,
+    response: Response,
     session: AsyncSession = Depends(get_db),
 ):
     """Handle Google OAuth callback."""
-    # TODO: Implement
-    # - Validate OAuth response
-    # - Exchange code for tokens
-    # - Get user info from Google
-    # - Create or authenticate user
-    # - Generate JWT token
-    # - Redirect to frontend with token
-    if error:
-        raise HTTPException(status_code=400, detail=f"Google OAuth error: {error}")
+    service = AuthService(session)
+    user, access_token, refresh_token = await service.handle_google_callback(request)
     
-    service = UserService(session)
-    raise HTTPException(status_code=501, detail="Not implemented")
+    # Set cookies
+    set_auth_cookies(response, access_token, refresh_token)
+    
+    return {
+        "user": user,
+        "token": {
+            "access_token": access_token,
+            "token_type": "bearer"
+        }
+    }
 
 
 @router.post("/refresh")

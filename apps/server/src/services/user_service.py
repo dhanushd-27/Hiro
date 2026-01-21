@@ -2,13 +2,10 @@ from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-
 from src.db.models.user_model import User
 from src.schema.user_schema import (
     UserRegister,
-    UserLogin,
     UserUpdate,
-    UserGoogleAuth,
 )
 
 
@@ -18,55 +15,59 @@ class UserService:
 
     async def get_user_by_id(self, user_id: UUID) -> User | None:
         """Get user by ID."""
-        # TODO: Implement
-        pass
+        stmt = select(User).where(User.id == user_id)
+        result = await self.session.execute(stmt)
+        return result.scalar_one_or_none()
 
     async def get_user_by_email(self, email: str) -> User | None:
         """Get user by email."""
-        # TODO: Implement
-        pass
+        stmt = select(User).where(User.email == email)
+        result = await self.session.execute(stmt)
+        return result.scalar_one_or_none()
 
     async def get_user_by_google_id(self, google_id: str) -> User | None:
         """Get user by Google ID."""
-        # TODO: Implement
-        pass
+        stmt = select(User).where(User.google_id == google_id)
+        result = await self.session.execute(stmt)
+        return result.scalar_one_or_none()
 
-    async def register_user(self, data: UserRegister) -> User:
-        """Register a new user with email and password."""
-        # TODO: Implement
-        # - Check if email already exists
-        # - Hash password
-        # - Create user
-        pass
+    async def create_user(self, data: UserRegister) -> User:
+        """Create a new user. (Moved from register_user logic)"""
+        # Note: Password hashing should happen in AuthService before calling this
+        # or we can pass hashed password here. For now, let's assume it's pre-hashed
+        # or we handle it in AuthService.
+        user = User(
+            email=data.email,
+            name=data.name,
+            password_hash=None, # To be set by caller if needed
+        )
+        self.session.add(user)
+        # We don't commit here, let the service or API decide when to commit
+        return user
 
-    async def authenticate_user(self, data: UserLogin) -> User | None:
-        """Authenticate user with email and password."""
-        # TODO: Implement
-        # - Get user by email
-        # - Verify password hash
-        # - Return user or None
-        pass
-
-    async def authenticate_or_create_google_user(self, data: UserGoogleAuth) -> User:
-        """Authenticate existing Google user or create new one."""
-        # TODO: Implement
-        # - Check if user exists by google_id
-        # - If not, create new user
-        # - Return user
-        pass
 
     async def update_user(self, user_id: UUID, data: UserUpdate) -> User | None:
         """Update user profile."""
-        # TODO: Implement
-        # - Get user by ID
-        # - Update fields
-        # - Return updated user
-        pass
+        user = await self.get_user_by_id(user_id)
+        if not user:
+            return None
+            
+        if data.name is not None:
+            user.name = data.name
+        if data.avatar_url is not None:
+            user.avatar_url = data.avatar_url
+            
+        await self.session.commit()
+        await self.session.refresh(user)
+        return user
 
     async def delete_user(self, user_id: UUID) -> bool:
         """Delete user account."""
-        # TODO: Implement
-        # - Get user by ID
-        # - Delete user
-        # - Return success status
-        pass
+        user = await self.get_user_by_id(user_id)
+        if not user:
+            return False
+            
+        await self.session.delete(user)
+        await self.session.commit()
+        return True
+
