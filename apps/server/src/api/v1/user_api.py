@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.db.session import get_db
 from src.schema.user_schema import UserUpdate, UserRead
 from src.services.user_service import UserService
+from src.dependencies.auth import get_current_user
 
 router = APIRouter(prefix="/user")
 
@@ -14,14 +15,11 @@ router = APIRouter(prefix="/user")
 )
 async def update_user(
     payload: UserUpdate,
-    # TODO: Add auth dependency to get current user from token
+    current_user: dict = Depends(get_current_user),
     session: AsyncSession = Depends(get_db),
 ):
     """Update current user profile."""
-    # TODO: Implement
-    # - Extract user ID from auth token
-    # - Call user service to update
-    # - Return updated user
+    user_id = current_user["sub"]
     service = UserService(session)
     raise HTTPException(status_code=501, detail="Not implemented")
 
@@ -31,13 +29,10 @@ async def update_user(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_user(
-    # TODO: Add auth dependency to get current user from token
+    current_user: dict = Depends(get_current_user),
     session: AsyncSession = Depends(get_db),
 ):
     """Delete current user account."""
-    # TODO: Implement
-    # - Extract user ID from auth token
-    # - Call user service to delete
-    # - Return success
+    user_id = current_user["sub"]
     service = UserService(session)
     raise HTTPException(status_code=501, detail="Not implemented")

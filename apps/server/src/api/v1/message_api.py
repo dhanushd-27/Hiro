@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.db.session import get_db
 from src.schema.message_schema import MessageCreate, MessageRead
 from src.services.message_service import MessageService
+from src.dependencies.auth import get_current_user
 
 router = APIRouter()
 
@@ -18,6 +19,7 @@ router = APIRouter()
 async def create_message(
     thread_id: UUID,
     payload: MessageCreate,
+    current_user: dict = Depends(get_current_user),
     session: AsyncSession = Depends(get_db),
 ):
     service = MessageService(session)
@@ -33,6 +35,7 @@ async def create_message(
 )
 async def list_messages(
     thread_id: UUID,
+    current_user: dict = Depends(get_current_user),
     session: AsyncSession = Depends(get_db),
 ):
     service = MessageService(session)

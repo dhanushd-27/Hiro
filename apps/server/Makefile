@@ -1,2 +1,2 @@
 dev:
-	uv run fastapi dev src/main.py
+	uv run uvicorn src.main:app --reload --no-access-log

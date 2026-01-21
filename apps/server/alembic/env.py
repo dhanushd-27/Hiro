@@ -10,6 +10,8 @@ from alembic import context
 from src.core.config import get_settings
 from src.db.base import Base
 
+from src.db.models import Thread, Message, User  # noqa: F401
+
 settings = get_settings()
 
 # this is the Alembic Config object, which provides

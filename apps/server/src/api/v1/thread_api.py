@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.db.session import get_db
 from src.schema.thread_schema import ThreadCreate, ThreadRead, ThreadUpdate
 from src.services.thread_service import ThreadService
+from src.dependencies.auth import get_current_user
 
 router = APIRouter()
 
@@ -17,6 +18,7 @@ router = APIRouter()
 )
 async def create_thread(
     payload: ThreadCreate,
+    current_user: dict = Depends(get_current_user),
     session: AsyncSession = Depends(get_db),
 ):
     service = ThreadService(session)
@@ -28,6 +30,7 @@ async def create_thread(
     response_model=list[ThreadRead],
 )
 async def list_threads(
+    current_user: dict = Depends(get_current_user),
     session: AsyncSession = Depends(get_db),
 ):
     service = ThreadService(session)
@@ -40,6 +43,7 @@ async def list_threads(
 )
 async def get_thread(
     thread_id: UUID,
+    current_user: dict = Depends(get_current_user),
     session: AsyncSession = Depends(get_db),
 ):
     service = ThreadService(session)
@@ -56,6 +60,7 @@ async def get_thread(
 async def update_thread(
     thread_id: UUID,
     payload: ThreadUpdate,
+    current_user: dict = Depends(get_current_user),
     session: AsyncSession = Depends(get_db),
 ):
     service = ThreadService(session)
@@ -71,6 +76,7 @@ async def update_thread(
 )
 async def delete_thread(
     thread_id: UUID,
+    current_user: dict = Depends(get_current_user),
     session: AsyncSession = Depends(get_db),
 ):
     service = ThreadService(session)

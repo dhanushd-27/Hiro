@@ -2,14 +2,14 @@ from datetime import datetime, timedelta, timezone
 from fastapi import HTTPException, Response
 import jwt
 
-from apps.server.src.core.config import get_settings
+from src.core.config import get_settings
 
 settings = get_settings()
 
 def create_access_token(data: dict) -> str:
   """Create a short-lived access token with user data."""
   to_encode = data.copy()
-  expire = datetime.now(timezone.now()) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE)
+  expire = datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE)
   to_encode.update({"exp": expire, "type": "access"})
   return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
@@ -30,7 +30,7 @@ def verify_token(token: str, expected_type: str) -> dict:
     return payload
   except jwt.ExpiredSignatureError:
     raise HTTPException(status_code=401, detail="Token has expired")
-  except jwt.jwt.InvalidTokenError:
+  except jwt.InvalidTokenError:
     raise HTTPException(status_code=401, detail="Invalid token")
 
 def set_auth_cookies(response: Response, access_token: str, refresh_token: str):
@@ -49,13 +49,13 @@ def set_auth_cookies(response: Response, access_token: str, refresh_token: str):
   response.set_cookie(
     key=settings.REFRESH_TOKEN_COOKIE_NAME,
     value=refresh_token,
-    max_age=settings.ACCESS_TOKEN_EXPIRE * 24 * 60 * 60,
+    max_age=settings.REFRESH_TOKEN_EXPIRE * 24 * 60 * 60,
     httponly=True,
     samesite="lax",
     secure=False
   )
 
-def clear_auth_cookie(response: Response):
+def clear_auth_cookies(response: Response):
   """Clear both auth cookies."""
   response.delete_cookie(key=settings.ACCESS_TOKEN_COOKIE_NAME)
   response.delete_cookie(key=settings.REFRESH_TOKEN_COOKIE_NAME)
