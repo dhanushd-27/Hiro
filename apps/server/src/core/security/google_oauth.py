@@ -1,4 +1,4 @@
-from apps.server.src.core.config import get_settings
+from src.core.config import get_settings
 from authlib.integrations.starlette_client import OAuth
 
 settings = get_settings()

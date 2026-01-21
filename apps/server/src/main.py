@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from starlette.middleware.sessions import SessionMiddleware
+
 from src.middleware.logging_middleware import LoggingMiddleware
 from src.core.config import get_settings
 from src.api.v1.health_api import router as health_router
@@ -20,6 +22,10 @@ app.add_middleware(
   allow_credentials=True,
   allow_methods=["*"],
   allow_headers=["*"]
+)
+app.add_middleware(
+  SessionMiddleware,
+  secret_key=settings.SECRET_KEY,
 )
 app.add_middleware(LoggingMiddleware)
 
